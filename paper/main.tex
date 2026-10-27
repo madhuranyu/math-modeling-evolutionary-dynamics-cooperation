@@ -162,7 +162,7 @@ Table \ref{fixation:table} shows the estimated fixation probabilities for the se
 The second main pattern is that increasing the cooperation benefit $b$ raises the fixation probability. For $N=100$, the fixation probability increases from $0.0012$ when $b=0.5$, to $0.0084$ when $b=1.5$, to $0.0248$ when $b=3.0$. This suggests that the low-aggression strategy is more likely to spread when cooperation produces a larger overall benefit. For primate-like groups, this suggests that lower-aggression behavior would be spread where cooperation, partner choice, or coalition formation create a real payoff benefit.
 
 \begin{center}
-  \includegraphics[width=\linewidth]{fixation_probability_vs_N_logscale.png}
+  \includegraphics[width=\linewidth]{../figures/fixation_probability_vs_N_logscale.png}
   \captionof{figure}{Fixation probability vs. population size.}
   \label{log_scale:fig}
 \end{center}
@@ -172,7 +172,7 @@ Figure \ref{log_scale:fig} plots the same fixation probabilities against populat
 For lower values of $b$, the mutant is usually below the neutral baseline. This means that it fixates less often than expected under random drift alone, so it is selected against. For larger values of $b$, the mutant is above the neutral baseline for most population sizes. For example, at $N=100$, the neutral baseline is $0.01$, while the fixation probability for $b=3.0$ is $0.0248$. This means that when the cooperation benefit is high enough, the cooperative type can do better than neutral drift. 
 
 \begin{center}
-  \includegraphics[width=\linewidth]{heatmap_fixation_probability.png}
+  \includegraphics[width=\linewidth]{../figures/heatmap_fixation_probability.png}
   \captionof{figure}{Fixation probability across $N$ and  $b$.}
   \label{heatmap_fixprob:fig}
 \end{center}
@@ -182,7 +182,7 @@ To examine the interaction between population size and cooperation benefit more 
 However, this heatmap mainly shows where fixation is most likely in absolutely terms. Since the probability decreases with $N$, it is also important to compare the simulation to the neutral baseline $1/N$. Therefore, I also calculated the relative advantage $A_C(N,b) = \rho_C(N,b)-\frac{1}{N}$.
 
 \begin{center}
-  \includegraphics[width=\linewidth]{heatmap_relative_advantage_contour.png}
+  \includegraphics[width=\linewidth]{../figures/heatmap_relative_advantage_contour.png}
   \captionof{figure}{Relative advantage over neutral drift with a threshold contour.}
   \label{heatmap_relativeadv_contour:fig}
 \end{center}
@@ -235,13 +235,13 @@ P_A^{\mathrm{death}}(i)
 \end{equation}
 
 \begin{center}
-  \includegraphics[width=\linewidth]{fixation_probability_vs_N.png}
+  \includegraphics[width=\linewidth]{../figures/fixation_probability_vs_N.png}
   \captionof{figure}{Fixation probability vs. population size (regular scale).}
   \label{fixprob:fig}
 \end{center}
 
 \begin{center}
-  \includegraphics[width=\linewidth]{heatmap_relative_advantage.png}
+  \includegraphics[width=\linewidth]{../figures/heatmap_relative_advantage.png}
   \captionof{figure}{Relative advantage over neutral drift without a threshold contour.}
   \label{heatmap_reladv:fig}
 \end{center}
