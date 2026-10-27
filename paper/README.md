@@ -4,7 +4,7 @@ This directory contains the final research paper and LaTeX source files for our 
 
 ## Files
 
-- **`evolutionary_game_theory.pdf`** — Final compiled research paper.
+- **`MathModeling_Evolutionary_Dynamics_Cooperation_Paper`** — Final compiled research paper.
 - **`main.tex`** — LaTeX source code for the paper, including mathematical formulations, methodology, and results.
 - **`references.bib`** — BibTeX bibliography containing the references cited in the paper.
 
