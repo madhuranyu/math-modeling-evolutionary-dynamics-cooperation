@@ -1,0 +1,279 @@
+\documentclass[11pt]{article}
+
+\usepackage[top=1in,bottom=1in,left=1in,right=1in,marginparwidth=.5in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{caption}
+\usepackage{tabularx}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+%% Start here %%
+
+\title{\textbf{The Planet of the Apes: The Odds of Cooperation}}
+
+\author{Madhura Vitonde (mv2395@nyu.edu)\footnote{Partner: Calder Song (cs7035@nyu.edu)}}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This project studies how population size affects the probability that a lower-aggression/cooperative mutant takes over a finite primate-like population. I focus mainly on two papers: Imhof, Fudenberg, and Nowak's paper on stochastic evolutionary dynamics in finite populations, and Ihara's paper on reduced aggression through partner choice and coalition formation. \cite{Imhof2005} show that finite populations can behave differently from deterministic infinite-population models, while \cite{Ihara2020}'s model suggests that lower aggression can be favored when cooperation and partner choice create enough benefit. Together, these papers connect a mathematical model of stochastic evolution with a biological question about how reduced aggression may spread in social groups. Using these models, I build a simplified model with two strategies, aggressive individuals and cooperative/low-aggression individuals. I start with one cooperative mutant in a population of aggressive individuals, and then use a Moran process simulation to estimate the probability that the cooperative type takes over. I then compare this probability across different population sizes and cooperation benefits to see when reduced aggression is more likely to emerge.    
+\end{abstract}
+\bigskip
+
+\begin{multicols}{2}
+
+\section{Introduction}
+
+Cooperation is an important part of many social systems, but it is not always obvious why cooperative or low-aggression behavior would evolve. In many situations, aggressive individuals seem to have an advantage because they can win direct conflicts or take resources from weaker individuals. This leads to a central question in evolutionary game theory: under what conditions can cooperation/lower aggression spread, especially when aggressive behavior may be individually beneficial?
+
+This question is also motivated by the study of primate social behavior and its connection to human evolution. Humans and other primates share evolutionary roots, so studying cooperation, aggression, and coalition formation in primates can help clarify what social pressures shape group behavior. For example, recent observations of the Ngogo chimpanzee community in Uganda describe a previously cohesive group splitting into two factions and entering a prolonged violent ``civil war'' (\cite{Sandel2026}). This example shows that primate groups can be shaped by both cooperation within coalitions and aggression between them. I do not model this specific case directly, but it provides additional motivation for studying how cooperative and aggressive behaviors spread. 
+
+This project is based mainly on two papers. The first is \cite{Imhof2005}'s paper on stochastic evolutionary dynamics in finite population. Their paper studies the evolution of cooperation and defection in a repeated prisoner's dilemma model using a finite-population Moran process. One of their main ideas is that stochastic evolution in finite populations can lead to different outcomes than deterministic models with infinitely large populations. This is important for my project because primate social groups are finite, so randomness and population size may affect whether cooperative behavior spreads.
+
+The second paper is \cite{Ihara2020}, which argues that reduced fighting ability can be favored when partner choice and collaboration make less aggressive individuals more successful. In this model, lower-aggression individuals may benefit from being chosen as partners, especially when collaboration is necessary and coalitions increase efficiency. This gives the biological motivation for treating lower aggression as costly in direct conflict, but it is potentially useful in cooperative  interactions.
+
+I also use \cite{Lyon2011}'s paper on primate mating strategies as background motivation. Their paper does not have the exact model that I use, but it shows how game theory can be applied to primate social behavior. They model primate infanticide as a three-player game involving two males and one female, where different reproductive strategies become Nash equilibria under certain parameter conditions. I use this paper to support the idea that game-theoretic models can be useful for studying primate social decisions, even though my model is simpler. 
+
+\medskip 
+\noindent This report asks the question: 
+\begin{quote}
+    \textit{How does population size affect the probability that a lower-aggression/cooperative mutant takes over a finite primate-like population?}
+\end{quote}
+I use a simplified model with two strategies: an aggressive/high-fighting-ability type and a cooperative/low-aggression type. Then I use a finite-population Moran process, based on the approach in \cite{Imhof2005}, to simulate what happens when one cooperative mutant is introduced into a population of aggressive individuals. By varying the population size and the benefit from cooperation, I estimate the probability that the cooperative type takes over the whole population. This allows me to study whether stochastic effects in smaller populations can help or hurt the emergence of reduced aggression. 
+
+\section{Problem setup}
+
+To investigate the question of whether population size affects the spread of lower-aggression behavior, I used a simplified evolutionary game model with two strategies. The first strategy is an aggressive or high-fighting ability type, $A$. The second strategy is a cooperative/low-aggression type, $C$. This is a simplification of \cite{Ihara2020}'s model, where individuals differ in fighting ability and reduced aggression may be favored when partner choice and collaboration is beneficial for less aggressive individuals. In the full model, the interaction is a three-player coalition game, but I simplified it so that I can focus specifically on stochastic variation in finite populations.
+
+The stochastic part of my model comes from the Moran process framework used by \cite{Imhof2005}. A Moran process is a finite-population model where the population size stays fixed, and at each step one individual is chosen to reproduce, and one individual is chosen to die. In this model, reproduction depends on fitness, while death is chosen randomly. This mean that strategies with higher fitness are more likely to spread, but random drift can still affect the outcome. 
+
+In my model, individuals interact through a payoff matrix, \eqref{payoff:matrix}. 
+
+\begin{equation}\label{payoff:matrix}
+\begin{array}{c|cc}
+ & C & A \\ \hline
+C & b-c & -c \\
+A & 1 & 0
+\end{array}
+\end{equation}
+
+The low-aggression type receives a benefit $b$ when interacting with another cooperative individual, because cooperation allows for pooling resources. However, the cooperative type pays a cost $c$, representing the disadvantage of lower aggression. The aggressive type, on the other hand, receives a benefit when interacting with a cooperative individual because it can exploit that individual. However, two aggressive individuals receive no benefit from interacting with each other because conflict cancels out the gain. 
+
+Let $N$ be the population size and let $i$ be the number of cooperative individuals in the population. Then there are $N-i$ aggressive individuals. Since individuals do not interact with themselves, the average payoff for a cooperative individual is
+\begin{equation}\label{payoff:C}
+\pi_C(i) =
+\frac{(i-1)(b-c) + (N-i)(-c)}{N-1}.
+\end{equation}
+Similarly, the average payoff for an aggressive individual is
+\begin{equation}\label{payoff:A}
+\pi_A(i) =
+\frac{i}{N-1}.
+\end{equation}
+These payoffs are then converted into fitness values using a selection strength parameter $s$:
+\begin{align}
+f_C(i) &= 1 + s\pi_C(i), \label{fitness:C}\\
+f_A(i) &= 1 + s\pi_A(i). \label{fitness:A}
+\end{align}
+When $s$ is small, selection is weak and random drift has a larger role. When $s$ is larger, payoff differences have a stronger effect on which type reproduces.
+
+Since there are $i$ cooperative individuals and $N-i$ aggressive individuals, the total fitness of the two types are
+\begin{align}
+F_C(i) &= i f_C(i), \label{totalfitness:C}\\
+F_A(i) &= (N-i) f_A(i). \label{totalfitness:A}
+\end{align}
+Using \eqref{totalfitness:C} and \eqref{totalfitness:A}, the probability that the number of cooperative individuals increases by one is the probability that a cooperative individual reproduces and an aggressive individual dies:
+\begin{equation}\label{transition:plus}
+T_i^+
+=
+P_C^{\mathrm{rep}}(i)P_A^{\mathrm{death}}(i)
+=
+\frac{F_C(i)}{F_C(i)+F_A(i)}
+\frac{N-i}{N}.
+\end{equation}
+Similarly, the probability that the number of cooperative individuals decreases by one is the probability that an aggressive individual reproduces and a cooperative individual dies:
+\begin{equation}\label{transition:minus}
+T_i^-
+=
+P_A^{\mathrm{rep}}(i)P_C^{\mathrm{death}}(i)
+=
+\frac{F_A(i)}{F_C(i)+F_A(i)}
+\frac{i}{N}.
+\end{equation}
+
+I begin each simulation with one cooperative mutant in a population of aggressive individuals, so the initial condition is
+\[
+i(0)=1
+\]
+If a cooperative individual reproduces and an aggressive individual dies, then $i$ increases by 1, and if an aggressive individual reproduces and a cooperative individual dies, then $i$ decreases by 1. If the reproducing and dying individuals are the same type, then $i$ stays the same. The process continues until one of two absorbing states is reached: 
+\[
+i=0 \quad \text{or} \quad i=N.
+\]
+
+The main quantity I estimate is the fixation probability of the cooperative type:
+\begin{equation}\label{fixation:probability}
+\rho_C(N, b)
+=
+P\left(i \rightarrow N \mid i(0)=1\right).
+\end{equation}
+I estimate \eqref{fixation:probability} numerically by running many independent simulations for each population size and cooperation benefit. To see whether cooperation is favored or not, I compare the estimated fixation probability to the neutral baseline. Under neutral drift, a single mutant has fixation probability $\rho_{\mathrm{neutral}}(N) = \frac{1}{N}$, since it begins as one individual in a population of size $N$. Therefore, the relative advantage of the cooperative type over neutral drift is the difference between the simulated fixation probability and the neutral baseline. 
+\begin{equation}\label{relative:advantage}
+A_C(N,b)
+=
+\rho_C(N,b)-\rho_{\mathrm{neutral}}(N)
+=
+\rho_C(N,b)-\frac{1}{N}.
+\end{equation}
+I use \eqref{relative:advantage} to make a second heatmap showing where cooperation is favored relative to neutral drift.
+
+\section{Results}
+
+I simulated the Moran process for population sizes $N=10,25,50,100,250,500$ and cooperation benefits $b=0.5,1.2,1.5,2.0,3.0$. For all simulations, I used cost $c=0.2$, selection strength $s=0.1$, and $5000$ independent trials for each parameter combination. Each simulation began with one cooperative/low-aggression mutant in a population of $N-1$ aggressive individuals. The simulation ended when the cooperative type either disappeared or fixated in the population. 
+
+\begin{center}
+\small
+  \begin{tabular}{c|ccccc}
+    \hline
+       $N \backslash b$ & $0.5$ & $1.2$ & $1.5$ & $2.0$ & $3.0$ \\ \hline 
+       10  & 0.080 & 0.089 & 0.086 & 0.094 & 0.111 \\
+       25  & 0.024 & 0.032 & 0.034 & 0.039 & 0.056 \\
+       50  & 0.005 & 0.013 & 0.017 & 0.025 & 0.036 \\
+       100 & 0.001 & 0.005 & 0.008 & 0.012 & 0.025 \\
+       250 & 0.000 & 0.001 & 0.002 & 0.004 & 0.010 \\
+       500 & 0.000 & 0.000 & 0.000 & 0.003 & 0.004 \\
+    \hline
+  \end{tabular}
+  \captionof{table}{Estimated fixation probabilities of the cooperative mutant.}
+  \label{fixation:table}
+\end{center}
+
+Table \ref{fixation:table} shows the estimated fixation probabilities for the selected population sizes and cooperation benefits. The first pattern is that the fixation probability decreases as the population size increases. For example, when $b=2.0$, the fixation probability is $0.0938$ at $N=10$ but decreases to $0.0246$ at $N=50$, $0.0124$ at $N=100$, and $0.0026$ at $N=500$. This decrease is expected because the cooperative type begins as a single mutant, and as $N$ increases, the mutant becomes a smaller fraction of the total population, so fixation becomes less likely. 
+
+The second main pattern is that increasing the cooperation benefit $b$ raises the fixation probability. For $N=100$, the fixation probability increases from $0.0012$ when $b=0.5$, to $0.0084$ when $b=1.5$, to $0.0248$ when $b=3.0$. This suggests that the low-aggression strategy is more likely to spread when cooperation produces a larger overall benefit. For primate-like groups, this suggests that lower-aggression behavior would be spread where cooperation, partner choice, or coalition formation create a real payoff benefit.
+
+\begin{center}
+  \includegraphics[width=\linewidth]{fixation_probability_vs_N_logscale.png}
+  \captionof{figure}{Fixation probability vs. population size.}
+  \label{log_scale:fig}
+\end{center}
+
+Figure \ref{log_scale:fig} plots the same fixation probabilities against population size, with the dashed curve showing the neutral baseline $1/N$. The neutral baseline represents the expected fixation probability of a single mutant that has no selective advantage or disadvantage. The figure shows that all fixation probabilities tend to decrease as $N$ increases, but the curves with larger $b$ values remain higher than the curves with smaller $b$ values. This supports the idea that population size affects the absolute probability of fixation, while the cooperation benefit affects whether the low-aggression type is favored relative to neutral drift. 
+
+For lower values of $b$, the mutant is usually below the neutral baseline. This means that it fixates less often than expected under random drift alone, so it is selected against. For larger values of $b$, the mutant is above the neutral baseline for most population sizes. For example, at $N=100$, the neutral baseline is $0.01$, while the fixation probability for $b=3.0$ is $0.0248$. This means that when the cooperation benefit is high enough, the cooperative type can do better than neutral drift. 
+
+\begin{center}
+  \includegraphics[width=\linewidth]{heatmap_fixation_probability.png}
+  \captionof{figure}{Fixation probability across $N$ and  $b$.}
+  \label{heatmap_fixprob:fig}
+\end{center}
+
+To examine the interaction between population size and cooperation benefit more broadly, I also estimated fixation probabilities across a larger range of $N$ and $b$ values. Figure \ref{heatmap_fixprob:fig} shows the raw fixation probability $\rho_C(N, b)$. The highest probabilities occur in the region with small population size and large benefit. This is consistent with the line plot, where smaller populations give a single mutant a higher starting frequency, and larger $b$ values make cooperative individuals more successful once they become common enough to interact with each other.  
+
+However, this heatmap mainly shows where fixation is most likely in absolutely terms. Since the probability decreases with $N$, it is also important to compare the simulation to the neutral baseline $1/N$. Therefore, I also calculated the relative advantage $A_C(N,b) = \rho_C(N,b)-\frac{1}{N}$.
+
+\begin{center}
+  \includegraphics[width=\linewidth]{heatmap_relative_advantage_contour.png}
+  \captionof{figure}{Relative advantage over neutral drift with a threshold contour.}
+  \label{heatmap_relativeadv_contour:fig}
+\end{center}
+
+Figure \ref{heatmap_relativeadv_contour:fig} shows the relative advantage of the cooperative mutant over neutral drift. The blue regions indicate parameter combinations where the mutant fixates less often than expected under neutrality, while red regions indicate where it fixates more often than expected. The black contour line marks the approximate boundary where $A_C(N,b) = 0$. This boundary separates regions where cooperation is selected against from regions where cooperation is favored. 
+
+The relative advantage heatmap shows that cooperation is not automatically favored in this model. For smaller values of $b$, the cooperative type is generally below neutral. As $b$ increases, the model moves into a region where the cooperative becomes neutral or positively favored. However, the exact boundary varies with $N$ and is somewhat noisy because the estimates come from stochastic simulations. Overall, the heatmap suggests that the benefit of cooperation must be sufficiently large for lower-aggression behavior to spread more often than expected by chance. 
+
+Taken together, population size strongly affects the absolute probability that a cooperative/low-aggression mutant takes over. However, it alone does not determine whether cooperation is favored. The relative advantage plots show that cooperation benefit $b$ determines wether the cooperative type performs better or worse than neutral drift. So, in this model, lower-aggression behavior is most likely to spread when the population is small enough for stochastic effects to matter and the benefit from cooperative interactions is large enough to overcome the disadvantage of lower aggression. This does not directly model any one primate society, but it gives a simple way to think about why reduced aggression may depend on both group size and the social benefit of cooperation. 
+ 
+\section{Summary}
+
+This project investigated how population size affects the probability that a cooperative/low-aggression mutant takes over a finite primate-like population. Using a simplified two-strategy evolutionary game and a finite-population Moran process, I estimated the fixation probability of the cooperative for different population sizes and cooperation benefits. The results show that the fixation probability generally decreases as population size increases. In other words, a single cooperative mutant is less likely to take over when it begins in a larger group. 
+
+The simulations also show that the cooperation benefit $b$ plays an important role. When this benefit is small, the cooperative type usually fixates less often than expected under neutral drift, meaning that it is selected against. When $b$ is large enough, the cooperative type can fixate more often than the neutral baseline of $1/N$. This suggests that lower-aggression behavior is not automatically favored, but it can spread when cooperative interactions provide a sufficiently large advantage. This connects closely to \cite{Ihara2020}'s model, where reduced aggression becomes more favorable when partner choice and coalition benefits make less aggressive individuals valuable collaborators. 
+
+Biologically, this suggests that low aggression may not evolve simply because it is ``better'' that aggression. Instead, it may depend on ecological and social conditions that change the value of collaboration. In primate-like groups, lower-aggression individuals may only gain an advantage when coalition formation or partner choice creates enough benefit to offset the costs of being less-aggressive in direct conflict. For example, factors such as food distribution, group size, territoriality, sexual dimorphism, and dominance hierarchy can affect whether collaboration is useful or whether direct competition is more important. In a group where resources are more patchy, coalition or cooperative defense may be valuable. Comparatively, in groups where the social hierarchy is highly competitive, aggression may have a larger payoff. This also connects to \cite{Lyon2011}'s primate game-theory model, because their paper shows that primate social behavior often depends on strategic interactions among multiple individuals rather than individual traits alone. 
+
+One strength of this model is that it connects the biological idea of reduced aggression and cooperation to a clear evolutionary process. The model also makes it possible to compare finite populations of different sizes and visualize when cooperation is favored. However, the model is also highly simplified. It reduces primate-like social behavior to only two strategies and does not include the full three-player coalition structure from \cite{Ihara2020}'s model. It also assumes fixed values for parameters such as the cost of cooperation and selection strength. 
+
+More broadly, this kind of model may also help to think about human social behavior, since humans and other primates share evolutionary roots and both rely on cooperation, conflict, and group structure. However, the model should only be taken as a simplified analogy, and not a direct explanation of human behavior. In human evolution, social behavior was also shaped by changing environments, group movement, local adaptation, and population-level processes like drift and bottlenecks. This connects to the model because a behavior does not have to be universally advantageous to spread, but it may become important under particular ecological or social conditions. Ultimately, the model suggests that lower aggression can spread when cooperation becomes socially valuable enough to outweigh the direct benefits of aggression.
+
+\appendix
+
+\section{Appendix: Extra material}
+
+Probability of a cooperative individual reproducing:
+\begin{equation}\label{prob:Creproduces}
+P_C^{\mathrm{rep}}(i)
+=
+\frac{F_C(i)}{F_C(i)+F_A(i)}.
+\end{equation}
+Probability of an aggressive individual reproducing:
+\begin{equation}\label{prob:Areproduces}
+P_A^{\mathrm{rep}}(i)
+=
+\frac{F_A(i)}{F_C(i)+F_A(i)}.
+\end{equation}
+Probability of a cooperative individual dying:
+\begin{equation}\label{prob:Cdies}
+P_C^{\mathrm{death}}(i)
+=
+\frac{i}{N}.
+\end{equation}
+Probability of an aggressive individual dying:
+\begin{equation}\label{prob:Adies}
+P_A^{\mathrm{death}}(i)
+=
+\frac{N-i}{N}.
+\end{equation}
+
+\begin{center}
+  \includegraphics[width=\linewidth]{fixation_probability_vs_N.png}
+  \captionof{figure}{Fixation probability vs. population size (regular scale).}
+  \label{fixprob:fig}
+\end{center}
+
+\begin{center}
+  \includegraphics[width=\linewidth]{heatmap_relative_advantage.png}
+  \captionof{figure}{Relative advantage over neutral drift without a threshold contour.}
+  \label{heatmap_reladv:fig}
+\end{center}
+
+\bibliographystyle{apalike} 
+% This sets how refernces and citations in your text are displayed
+% The reference entries are in the file references.bib. These are in Bibtex format.  You can often export references you find online as bibtex entries, then simply cut-and-paste them into references.bib 
+\bibliography{references} 
+
+\end{multicols}
+
+\end{document}
+
+
+
+% My macros
+\newcommand{\<}   {\langle}
+\renewcommand{\>} {\rangle}
+\newcommand{\ul}  {\underline}
+\newcommand{\ol}  {\overline}
+\newcommand{\ca}  [1]{\mathcal{#1}}
+\newcommand{\bs}  [1]{\boldsymbol{#1}}
+\renewcommand{\vec} [1]{\bs{#1}}   % boldface vectors
+\newcommand{\uvec} [1]{\bs{\hat{#1}}}
+\newcommand{\p}   {\partial}
+\newcommand{\del} {\nabla}
+\newcommand{\pp}  [2]{\frac{\p #1}{\p #2}}
+\renewcommand{\d} {\mathrm{d}}
+\newcommand{\dd}  [2]{\frac{\d #1}{\d #2}}
+\newcommand{\DD}  [2]{\frac{D #1}{D #2}}
+\newcommand{\e}   [1]{\ensuremath{\times 10^{#1}}}
+\newcommand{\mat} [1]{\mathsf{#1}}  % matrices
+\newcommand{\T}   {\scriptstyle \mathsf{T}}
+\newcommand{\tran} [1]{\mat{#1}^{\T}} 
+\newcommand{\matel} [1]{\mathsf{#1}}          
